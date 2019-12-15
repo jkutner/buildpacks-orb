@@ -55,3 +55,5 @@ commands:
             export PATH="$PATH:<< parameters.install-dir >>"
             mkdir -p ~/.docker/
             if [ ! -f ~/.docker/config.json ]; then
+              echo "{}" > ~/.docker/config.json
+            fi
