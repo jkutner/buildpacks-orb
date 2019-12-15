@@ -63,7 +63,7 @@ examples:
     usage:
       version: 2.1
       orbs:
-        buildpacks: jkutner/buildpacks@0.0.2
+        buildpacks: jkutner/buildpacks@x.y.z
       workflows:
         main:
           jobs:
