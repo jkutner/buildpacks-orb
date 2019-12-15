@@ -1,0 +1,57 @@
+version: 2.1
+description: Cloud Native Buildpacks Orb
+
+orbs:
+  docker: circleci/docker@0.5.18
+  orb-tools: circleci/orb-tools@8.8.0
+jobs:
+  build:
+    description: "Build OCI Image"
+    machine: true
+    parameters:
+      image-name:
+        type: string
+      builder:
+        type: string
+    steps:
+      - install-pack
+      - checkout
+      - pack-build:
+          image-name: << parameters.image-name >>
+          builder: << parameters.builder >>
+commands:
+  pack-build:
+    description: "Run pack build"
+    parameters:
+      image-name:
+        type: string
+      builder:
+        type: string
+    steps:
+      - restore_cache:
+          key: pack-cache-<< parameters.image-name >>-<< parameters.builder >>-{{ arch }}
+      - run: pack build << parameters.image-name >> --builder << parameters.builder >>
+      - save_cache:
+          key: pack-cache-<< parameters.image-name >>-<< parameters.builder >>-{{ arch }}-{{ epoch }}
+          paths:
+            - /var/lib/docker/volumes/
+  install-pack:
+    description: "Setup and install pack"
+    parameters:
+      install-dir:
+        default: ~/bin
+        description: |
+          Directory in which to install Pack binary
+        type: string
+      version:
+        type: string
+        default: 0.5.0
+    steps:
+      - run:
+          name: "Setup and install pack"
+          command: |
+            mkdir -p << parameters.install-dir >>
+            curl -L "https://github.com/buildpack/pack/releases/download/v<< parameters.version >>/pack-v<< parameters.version >>-linux.tgz" | tar xzm -C << parameters.install-dir >>
+            export PATH="$PATH:<< parameters.install-dir >>"
+            mkdir -p ~/.docker/
+            if [ ! -f ~/.docker/config.json ]; then
