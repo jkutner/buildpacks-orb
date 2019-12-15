@@ -57,3 +57,16 @@ commands:
             if [ ! -f ~/.docker/config.json ]; then
               echo "{}" > ~/.docker/config.json
             fi
+examples:
+  heroku:
+    description: Run the Heroku Buildpacks
+    usage:
+      version: 2.1
+      orbs:
+        buildpacks: jkutner/buildpacks@0.0.2
+      workflows:
+        main:
+          jobs:
+            - buildpacks/build:
+                image-name: myimage
+                builder: heroku/buildpacks:18
