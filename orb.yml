@@ -25,7 +25,7 @@ jobs:
           image-name: << parameters.image-name >>
           image-file: << parameters.image-file >>
 commands:
-  save-image:
+  save-image-to-workspace:
     description: "Save image"
     parameters:
       image-name:
