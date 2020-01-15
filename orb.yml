@@ -11,6 +11,8 @@ jobs:
     parameters:
       image-name:
         type: string
+      image-file:
+        type: string
       builder:
         type: string
     steps:
@@ -19,7 +21,24 @@ jobs:
       - pack-build:
           image-name: << parameters.image-name >>
           builder: << parameters.builder >>
+      - save-image-to-workspace:
+          image-name: << parameters.image-name >>
+          image-file: << parameters.image-file >>
 commands:
+  save-image:
+    description: "Save image"
+    parameters:
+      image-name:
+        type: string
+      image-file:
+        type: string
+        default: image.tgz
+    steps:
+      - run: docker save -o << parameters.image-file >> << parameters.image-name >>
+      - persist_to_workspace:
+          root: .
+          paths:
+            - << parameters.image-file >>
   pack-build:
     description: "Run pack build"
     parameters:
@@ -70,3 +89,29 @@ examples:
             - buildpacks/build:
                 image-name: myimage
                 builder: heroku/buildpacks:18
+  build-and-publish:
+    description: Run the Heroku Buildpacks
+    usage:
+      version: 2.1
+      orbs:
+        buildpacks: jkutner/buildpacks@x.y.z
+      jobs:
+        publish:
+          machine: true
+          steps:
+            - attach_workspace:
+                at: /tmp/workspace
+            - run:
+                command: |
+                  docker load -i /tmp/workspace/myimage.tgz
+                  docker push myimage
+      workflows:
+        main:
+          jobs:
+            - buildpacks/build:
+                image-name: myimage
+                image-file: myimage.tgz
+                builder: heroku/buildpacks:18
+            - publish:
+                requires:
+                  - buildpacks/build
