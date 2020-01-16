@@ -17,6 +17,7 @@ jobs:
         type: string
       buildpack:
         type: string
+        default:
     steps:
       - install-pack
       - checkout
