@@ -103,6 +103,19 @@ examples:
             - buildpacks/build:
                 image-name: myimage
                 builder: heroku/buildpacks:18
+  use-buildpack:
+    description: Run the Heroku Buildpacks
+    usage:
+      version: 2.1
+      orbs:
+        buildpacks: jkutner/buildpacks@x.y.z
+      workflows:
+        main:
+          jobs:
+            - buildpacks/build:
+                image-name: myimage
+                builder: heroku/buildpacks:18
+                buildpack: heroku/ruby
   build-and-publish:
     description: Run the Heroku Buildpacks
     usage:
