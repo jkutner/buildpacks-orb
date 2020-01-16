@@ -57,10 +57,7 @@ commands:
     steps:
       - restore_cache:
           key: pack-cache-<< parameters.image-name >>-<< parameters.builder >>-{{ arch }}
-      - run:
-          command: |
-            buildpack_opt="$(if [ -n "<< parameters.buildpack >>" ]; then echo -n "--buildpack << parameters.buildpack >>"; else echo -n ""; fi)"
-            pack build << parameters.image-name >> --builder << parameters.builder >> ${buildpack_opt}
+      - run: pack build << parameters.image-name >> --builder << parameters.builder >> $(if [ -n "<< parameters.buildpack >>" ]; then echo -n "--buildpack << parameters.buildpack >>"; else echo -n ""; fi)
       - save_cache:
           key: pack-cache-<< parameters.image-name >>-<< parameters.builder >>-{{ arch }}-{{ epoch }}
           paths:
