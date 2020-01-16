@@ -13,6 +13,7 @@ jobs:
         type: string
       image-file:
         type: string
+        default: "image.tgz"
       builder:
         type: string
       buildpack:
