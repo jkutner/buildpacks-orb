@@ -15,12 +15,15 @@ jobs:
         type: string
       builder:
         type: string
+      buildpack:
+        type: string
     steps:
       - install-pack
       - checkout
       - pack-build:
           image-name: << parameters.image-name >>
           builder: << parameters.builder >>
+          buildpack: << parameters.buildpack >>
       - save-image-to-workspace:
           image-name: << parameters.image-name >>
           image-file: << parameters.image-file >>
@@ -49,10 +52,15 @@ commands:
         type: string
       builder:
         type: string
+      buildpack:
+        type: string
     steps:
       - restore_cache:
           key: pack-cache-<< parameters.image-name >>-<< parameters.builder >>-{{ arch }}
-      - run: pack build << parameters.image-name >> --builder << parameters.builder >>
+      - run:
+          command: |
+            buildpack_opt="$(if [ -n "<< parameters.buildpack >>" ]; then echo -n "--buildpack << parameters.buildpack >>"; else echo -n ""; fi)"
+            pack build << parameters.image-name >> --builder << parameters.builder >> ${buildpack_opt}
       - save_cache:
           key: pack-cache-<< parameters.image-name >>-<< parameters.builder >>-{{ arch }}-{{ epoch }}
           paths:
