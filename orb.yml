@@ -47,7 +47,7 @@ commands:
       - persist_to_workspace:
           root: .
           paths:
-            - images/
+            - ./
   pack-build:
     description: "Run pack build"
     parameters:
