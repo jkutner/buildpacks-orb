@@ -39,6 +39,7 @@ commands:
         default: image.tgz
     steps:
       - run:
+          name: Save image to workspace
           command: |
             mkdir -p images
             docker save -o images/<< parameters.image-file >> << parameters.image-name >>
@@ -58,7 +59,10 @@ commands:
     steps:
       - restore_cache:
           key: pack-cache-<< parameters.image-name >>-<< parameters.builder >>-{{ arch }}
-      - run: pack build << parameters.image-name >> --builder << parameters.builder >> $(if [ -n "<< parameters.buildpack >>" ]; then echo -n "--buildpack << parameters.buildpack >>"; else echo -n ""; fi)
+      - run:
+          name: Run pack build
+          command: |
+            pack build << parameters.image-name >> --builder << parameters.builder >> $(if [ -n "<< parameters.buildpack >>" ]; then echo -n "--buildpack << parameters.buildpack >>"; else echo -n ""; fi)
       - save_cache:
           key: pack-cache-<< parameters.image-name >>-<< parameters.builder >>-{{ arch }}-{{ epoch }}
           paths:
