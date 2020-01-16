@@ -34,11 +34,14 @@ commands:
         type: string
         default: image.tgz
     steps:
-      - run: docker save -o << parameters.image-file >> << parameters.image-name >>
+      - run:
+          command: |
+            mkdir -p images
+            docker save -o images/<< parameters.image-file >> << parameters.image-name >>
       - persist_to_workspace:
           root: .
           paths:
-            - << parameters.image-file >>
+            - images/
   pack-build:
     description: "Run pack build"
     parameters:
@@ -103,7 +106,7 @@ examples:
                 at: /tmp/workspace
             - run:
                 command: |
-                  docker load -i /tmp/workspace/myimage.tgz
+                  docker load -i /tmp/workspace/images/myimage.tgz
                   docker push myimage
       workflows:
         main:
